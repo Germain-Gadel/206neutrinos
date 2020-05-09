@@ -1,0 +1,73 @@
+#!/usr/bin/python3
+
+import math
+import sys
+
+
+def print_help():
+    if len(sys.argv) == 2 and sys.argv[1] == "-h":
+        print("USAGE\n\t./206neutrinos n a h sd\n\nDESCRIPTION\n\tn\tnumber of values\n\ta\tarithmetic "
+              "mean\n\th\tharmonic mean\n\tsd\tstandard deviation")
+        exit(0)
+
+
+def print_error():
+    print("Error : wrong values")
+    exit(84)
+
+
+def check_enough_values():
+    if len(sys.argv) != 5:
+        print_error()
+
+
+def get_values():
+    nb_values = 0
+    ari_mean = 0
+    har_mean = 0
+    std_dev = 0
+    try:
+        nb_values = int(sys.argv[1])
+        ari_mean = int(sys.argv[2])
+        har_mean = int(sys.argv[3])
+        std_dev = int(sys.argv[4])
+        if nb_values < 0 or ari_mean < 0 or har_mean < 0 or std_dev < 0:
+            print_error()
+    except ValueError:
+        print_error()
+    return nb_values, ari_mean, har_mean, std_dev
+
+
+def print_values(nb_values, ari_mean, har_mean, std_dev, square):
+    print("\tNumber of values:\t%d" % nb_values)
+    print("\tStandard deviation:\t%0.2f" % std_dev)
+    print("\tArithmetic mean:\t%0.2f" % ari_mean)
+    print("\tRoot mean square:\t%0.2f" % square)
+    print("\tHarmonic mean:\t\t%0.2f\n" % har_mean)
+
+
+def calc_neutrinos(nb_values, ari_mean, har_mean, std_dev):
+    while True:
+        in_value = input("Enter next value: ")
+        if in_value == "END":
+            exit(0)
+        else:
+            value = float(in_value)
+            calc = ari_mean * nb_values
+            root_square = (math.pow(std_dev, 2) + math.pow(ari_mean, 2)) * nb_values
+            nb_values += 1
+            ari_mean = (calc + value) / nb_values
+            std_dev = math.sqrt(((root_square + math.pow(value, 2)) / nb_values) - math.pow(ari_mean, 2)) * 1.0
+            square = math.sqrt((root_square + math.pow(value, 2)) / nb_values)
+            har_mean = nb_values / ((1 / value) + ((nb_values - 1) / har_mean))
+            print_values(nb_values, ari_mean, har_mean, std_dev, square)
+
+
+def main():
+    print_help()
+    check_enough_values()
+    nb_values, ari_mean, har_mean, std_dev = get_values()
+    calc_neutrinos(nb_values, ari_mean, har_mean, std_dev)
+
+
+main()
